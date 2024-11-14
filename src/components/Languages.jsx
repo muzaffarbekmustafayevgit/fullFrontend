@@ -12,13 +12,11 @@ function Languages() {
           id="language"
           value={language}
           onChange={handleLanguageChange}
-          className="language-select dark:bg-gray-800  "
+          className="language-select dark:text-white dark:bg-gray-800  "
         >
           <option value="uz" >O'zbekcha</option>
           <option value="ru">Русский</option>
           <option value="en">English</option>
-          <option value="fr">Français</option>
-          <option value="de">Deutsch</option>
         </select>
       </div>
     );

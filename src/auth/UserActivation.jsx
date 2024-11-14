@@ -1,17 +1,16 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-const Signup = () => {
-  const [name, setName] = useState("");
-  const [fullname, setFullname] = useState(""); // Corrected typo
-  const [military_unit, setMilitary_unit] = useState("");
+import React from "react";
+import { useState } from "react";
+function UserActivation() {
+  const savedEmail = localStorage.getItem("email");
   const [email, setEmail] = useState("");
+
   const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const navigate = useNavigate();
-  const url = "http://api.eagledev.uz/api/user/register/";
+  const url = "http://api.eagledev.uz/api/user/activation/";
 
-  const handleSignup = async (e) => {
+  const handleActivate = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch(url, {
@@ -19,13 +18,10 @@ const Signup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        mode: 'cors',
+        mode: "cors",
         body: JSON.stringify({
-          username: name,
           email: email,
           password: password,
-          full_name: fullname,
-          military_unit: military_unit,
         }),
       });
 
@@ -35,12 +31,7 @@ const Signup = () => {
 
       const data = await response.json();
       console.log("Signup successful:", data);
-      navigate('/activation')
       setSuccess("Signup successful!");
-      console.log(response.status);
-
-      localStorage.setItem("email", email);
-      localStorage.removeItem('user')
       setError(""); // clear any previous error message
     } catch (err) {
       console.error("Signup failed:", err);
@@ -55,24 +46,7 @@ const Signup = () => {
         <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
           Sign Up
         </h2>
-        <form className="space-y-6" onSubmit={handleSignup}>
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
+        <form className="space-y-6" onSubmit={handleActivate}>
           <div>
             <label
               htmlFor="email"
@@ -84,8 +58,8 @@ const Signup = () => {
               type="email"
               id="email"
               name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={savedEmail}
+              onChange={(e) => setEmail(savedEmail)}
               required
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
             />
@@ -107,40 +81,7 @@ const Signup = () => {
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
             />
           </div>
-          <div>
-            <label
-              htmlFor="fullname"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Fullname
-            </label>
-            <input
-              type="text"
-              id="fullname"
-              name="fullname"
-              value={fullname}
-              onChange={(e) => setFullname(e.target.value)} // Corrected typo
-              required
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="military_unit"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Military Unit
-            </label>
-            <input
-              type="number"
-              id="military_unit"
-              name="military_unit"
-              value={military_unit}
-              onChange={(e) => setMilitary_unit(e.target.value)}
-              required
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
+
           <div>
             <button
               type="submit"
@@ -151,7 +92,9 @@ const Signup = () => {
           </div>
         </form>
         {error && <p className="text-sm text-center text-red-500">{error}</p>}
-        {success && <p className="text-sm text-center text-green-500">{success}</p>}
+        {success && (
+          <p className="text-sm text-center text-green-500">{success}</p>
+        )}
         <p className="text-sm text-center text-gray-600 dark:text-gray-300">
           Already have an account?{" "}
           <a href="/login" className="text-blue-600 hover:text-blue-500">
@@ -161,6 +104,6 @@ const Signup = () => {
       </div>
     </div>
   );
-};
+}
 
-export default Signup;
+export default UserActivation;

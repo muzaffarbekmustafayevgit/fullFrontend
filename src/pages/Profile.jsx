@@ -19,7 +19,19 @@ const Profile = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  useEffect(() => {
+    const handleUnload = () => {
+      localStorage.removeItem('accessToken');
+    };
 
+    // `unload` hodisasiga tinglovchi qo'shiladi
+    window.addEventListener('unload', handleUnload);
+
+    // Tozalanish uchun tinglovchi olib tashlanadi
+    return () => {
+      window.removeEventListener('unload', handleUnload);
+    };
+  }, []);
   const navigate = useNavigate();
 
   const toggleTheme = () => {
@@ -115,11 +127,11 @@ const Profile = () => {
             </li>
             <li className="w-11/12">
               <Link
-                to={"/categories"}
+                to={"/courses"}
                 className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 <MdOutlineOndemandVideo className="dark:text-white" />
-                Categories
+                Kurslar
               </Link>
             </li>
             <li className="w-11/12">
@@ -138,7 +150,7 @@ const Profile = () => {
               >
                 <CgProfile />
                 Profile
-                <FaChevronRight className="text-white right-0" />
+                <FaChevronRight className="dark:text-white right-0" />
               </Link>
             </li>
           </ul>
@@ -165,7 +177,7 @@ const Profile = () => {
               className="space-y-4 h-full w-full flex items-center
             flex-col justify-center text-black dark:text-white"
             >
-              <h2 className="text-2xl">Profile Information</h2>
+              <h2 className="text-2xl">Profile Malumoti</h2>
 
               {data.profile_image ? (
                 <img
@@ -174,11 +186,11 @@ const Profile = () => {
                   style={{ width: 60, height: 60 }}
                 />
               ) : (
-                <CgProfile size={60} />
+                <CgProfile size={100} />
               )}
 
               <p>
-                <strong>Name:</strong> {data.user_obj.username}
+                <strong >Name:</strong> {data.user_obj.username}
               </p>
               <p>
                 <strong>Email:</strong> {data.user_obj.email}

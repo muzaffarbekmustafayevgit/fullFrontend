@@ -59,7 +59,7 @@ const Login = () => {
           localStorage.setItem("access_token", data.access);
           localStorage.setItem("refresh_token", data.refresh);
           localStorage.setItem("user", data.user_obj);
-         
+
           setError(null);
 
           // Navigate to the profile page
@@ -84,7 +84,9 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <Mouse />
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg dark:bg-gray-800">
-        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">Log In</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
+          Log In
+        </h2>
         {error && <p className="text-sm text-center text-red-500">{error}</p>}
 
         <form className="space-y-6" onSubmit={handleLogin}>
