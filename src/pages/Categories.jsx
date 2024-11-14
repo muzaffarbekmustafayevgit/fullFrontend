@@ -8,19 +8,22 @@ import {
 } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
-import { CiTextAlignCenter } from "react-icons/ci";
 import Loading from "../components/Loading";
 import { Link, useNavigate } from "react-router-dom";
 import Languages from "../components/Languages";
 // import Date from "../components/Date";
-
+import { useLocation } from "react-router-dom";
+import { FaChevronRight } from "react-icons/fa";
 const Categories = () => {
   const [theme, setTheme] = useState("dark");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
 
+  const nameParam = queryParams.get("name");
   const navigate = useNavigate();
 
   const toggleTheme = () => {
@@ -108,23 +111,16 @@ const Categories = () => {
               </a>
             </li>
             <li className="w-11/12">
-              <a
-                href="#"
-                className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 "
+              <Link
+                to={"/categories"}
+                className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-700 "
               >
                 <MdOutlineOndemandVideo className="dark:text-white" />
-                Videos
-              </a>
+                Categories
+                <FaChevronRight className="text-white right-0" />
+              </Link>
             </li>
-            <li className="w-11/12">
-              <a
-                href="#"
-                className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
-              >
-                <CiTextAlignCenter className="dark:text-white" />
-                Video's text
-              </a>
-            </li>
+
             <li className="w-11/12">
               <Link
                 to={"/profile"}
@@ -152,7 +148,7 @@ const Categories = () => {
         </aside>
 
         <section className="flex-1 bg-white dark:bg-gray-900 p-4">
-          <div className="p -4">
+          <div className="p-4">
             <h3 className="text-lg dark:text-white font-semibold mb-4">
               Kategoriyalar:
             </h3>
@@ -164,9 +160,11 @@ const Categories = () => {
                   className="border rounded px-2 py-3 dark:text-white  dark:bg-gray-700 cursor-pointer hover:bg-gray-600"
                 >
                   {category}
+                  <br />
+                  {index}
+                  <p>Query parametr (name): {category}</p>
                 </div>
               ))}
-              <input type="text" />
             </div>
           </div>
         </section>
