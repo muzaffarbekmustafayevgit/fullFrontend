@@ -13,7 +13,7 @@ import { CiTextAlignCenter } from "react-icons/ci";
 import Loading from "../components/Loading";
 import { Link, useNavigate } from "react-router-dom";
 import Languages from "../components/Languages";
-import DefaultUserImage from "../images/DefaultUserImage.png";
+// import DefaultUserImage from "../images/DefaultUserImage.png";
 const Profile = () => {
   const [theme, setTheme] = useState("dark");
   const [data, setData] = useState(null);
