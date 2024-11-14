@@ -73,8 +73,9 @@ const Profile = () => {
 
         const result = await response.json();
         setData(result);
+        // localStorage.setItem("user", data.user_obj.username);
         // console.log(result);
-        // console.log("your name " + result.user_obj.username);
+        console.log("your name " + result.user_obj.username);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -86,7 +87,7 @@ const Profile = () => {
   }, []);
 
   if (loading) return <Loading />;
-  if (error) return <p>Error: {error}</p>;
+  // if (error) return <p>Error: {error}</p>;
   // console.log(data);
   return (
     <div className="h-screen flex flex-col">

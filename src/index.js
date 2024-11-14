@@ -13,8 +13,9 @@ import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
 import Languages from "./components/Languages";
 import Courses from "./pages/Courses";
-import Modules from "./pages/Modules";
+import AboutCourse from "./pages/AboutCourse";
 import UserActivation from "./auth/UserActivation";
+import Lessons from "./pages/Lessons";
 // import Loading from "./components/Loading";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -30,8 +31,9 @@ root.render(
       <Route path="/profile/" element={<Profile />} />
       <Route path="/courses" element={<Courses />} />
       <Route path="/languages" element={<Languages />} />
-      <Route path="/modules" element={<Modules />} />
+      <Route path="/modules" element={<AboutCourse />} />
       <Route path="/activation" element={<UserActivation/>}/>
+      <Route path="/lessons" element={<Lessons/>}/>
     </Routes>
   </BrowserRouter>
 );

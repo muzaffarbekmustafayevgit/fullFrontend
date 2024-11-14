@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import Languages from "../components/Languages";
-import { FaHome, FaChevronRight } from "react-icons/fa";
+import {  FaChevronRight } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { Link } from "react-router-dom";
-
+import {
+  FaTelegramPlane,
+  FaYoutube,
+  FaInstagram,
+  FaFacebook,
+  FaHome,
+} from "react-icons/fa";
 const Courses = () => {
   const [theme, setTheme] = useState("dark");
   const [loading, setLoading] = useState(true);
@@ -25,7 +31,6 @@ const Courses = () => {
   // Handle category click to navigate to a different route
   const handleCourseClick = (category, index) => {
     navigate("/modules", { state: { category, index } });
-
   };
 
   // UseEffect to check token and fetch course categories
@@ -52,12 +57,12 @@ const Courses = () => {
           }
 
           const result = await response.json();
-          console.log(result); // Check the structure of the response
+          // console.log(result); // Check the structure of the response
 
           // Assuming the response is an array of course objects, we map titles
-          setCategories(result.map((course) => course.title)); 
+          setCategories(result.map((course) => course.title));
         } catch (err) {
-          console.error('Fetch error: ', err);
+          console.error("Fetch error: ", err);
           setError(err.message);
         } finally {
           setLoading(false);
@@ -126,6 +131,20 @@ const Courses = () => {
               </Link>
             </li>
           </ul>
+          <div className="flex justify-around align-bottom mt-auto pt-4 border-t dark:border-gray-700">
+            <a href="#">
+              <FaTelegramPlane className="h-6 w-6 text-blue-500" />
+            </a>
+            <a href="#">
+              <FaInstagram className="h-6 w-6 text-pink-600" />
+            </a>
+            <a href="#">
+              <FaFacebook className="h-6 w-6 text-blue-800" />
+            </a>
+            <a href="#">
+              <FaYoutube className="h-6 w-6 text-red-700" />
+            </a>
+          </div>
         </aside>
 
         <section className="flex-1 bg-white dark:bg-gray-900 p-4">
@@ -141,6 +160,7 @@ const Courses = () => {
                   className="border rounded px-2 py-3 dark:text-white dark:bg-gray-700 cursor-pointer hover:bg-gray-200"
                 >
                   {category}
+                  
                   <br />
                 </div>
               ))}
