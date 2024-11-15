@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import Languages from "../components/Languages";
-import {  FaChevronRight } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { Link } from "react-router-dom";
@@ -160,7 +160,7 @@ const Courses = () => {
                   className="border rounded px-2 py-3 dark:text-white dark:bg-gray-700 cursor-pointer hover:bg-gray-200"
                 >
                   {category}
-                  
+
                   <br />
                 </div>
               ))}

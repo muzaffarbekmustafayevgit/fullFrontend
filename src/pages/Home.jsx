@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 const LandingPage = () => {
   return (
     <div className="font-sans text-gray-800">
@@ -7,9 +7,9 @@ const LandingPage = () => {
       <header className="bg-gray-800 text-white py-20 px-4 text-center">
         <h1 className="text-4xl font-bold">Learning Center'ga Xush Kelibsiz</h1>
         <p className="mt-4 text-lg">O'rganishni yangi darajaga ko'taring</p>
-        <a href="/categories" className="mt-6 inline-block bg-red-500 text-white py-2 px-6 rounded hover:bg-red-600 transition">
+        <Link to="/courses" className="mt-6 inline-block bg-red-500 text-white py-2 px-6 rounded hover:bg-red-600 transition">
           Kurslarimizni Ko'rish
-        </a>
+        </Link>
       </header>
 
       {/* Xizmatlar bo'limi */}

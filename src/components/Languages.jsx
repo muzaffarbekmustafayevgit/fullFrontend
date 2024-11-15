@@ -4,8 +4,9 @@ function Languages() {
 
     const handleLanguageChange = (event) => {
       setLanguage(event.target.value);
+
     };
-  
+  localStorage.setItem('language',language)
     return (
       <div className='bg-transparent'>
         <select

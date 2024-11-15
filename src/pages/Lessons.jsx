@@ -6,54 +6,52 @@ import Languages from "../components/Languages";
 const Lessons = () => {
   const [theme, setTheme] = useState("dark");
   const [modulesData, setModulesData] = useState([]);
-  const [lessonsData, setLessonsData] = useState({});
+  const [lessonsData, setLessonsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const selectedCourse = localStorage.getItem("selectedCoursesIndex") || 1;
-  const lessonId = localStorage();
-  useEffect(() => {
+  const selectedModule = localStorage.getItem("selectedModulesIndex") || 1;
+
+  const handleSelectModule = (moduleId) => {
+    localStorage.setItem("selectedModulesIndex", moduleId);
+  };
+
+  const fetchModulesAndLessons = async () => {
     const token = localStorage.getItem("access_token");
     if (!token) {
       navigate("/login");
-    } else {
-      const fetchModulesAndLessons = async () => {
-        try {
-          // Fetch Modules
-          const modulesResponse = await fetch(
-            `http://api.eagledev.uz/api/Modules/?course=${selectedCourse}`
-          );
-          if (!modulesResponse.ok)
-            throw new Error("Modullar ma'lumotini olishda xatolik yuz berdi");
-
-          const modulesResult = await modulesResponse.json();
-          setModulesData(modulesResult);
-
-          // Fetch Lessons for each module
-          const lessonsPromises = modulesResult.map((module) =>
-            fetch(
-              `http://api.eagledev.uz/api/Lessons/?id=${lessonId}&is_open&module=${moduleId}`
-            )
-              .then((res) => res.json())
-              .then((lessons) => ({ [module.id]: lessons }))
-          );
-
-          const lessonsResults = await Promise.all(lessonsPromises);
-          const lessonsMap = lessonsResults.reduce((acc, lesson) => {
-            return { ...acc, ...lesson };
-          }, {});
-
-          setLessonsData(lessonsMap);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchModulesAndLessons();
+      return;
     }
-  }, [navigate, selectedCourse]);
+
+    try {
+      const [lessonsResponse, modulesResponse] = await Promise.all([
+        fetch(`http://api.eagledev.uz/api/Lessons`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`http://api.eagledev.uz/api/Modules/?course=${selectedCourse}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      if (!modulesResponse.ok) {
+        throw new Error("Modullar ma'lumotini olishda xatolik yuz berdi");
+      }
+      if (!lessonsResponse.ok) {
+        throw new Error("Darsliklar ma'lumotini olishda xatolik yuz berdi");
+      }
+
+      const modulesResult = await modulesResponse.json();
+      const lessonsResult = await lessonsResponse.json();
+      
+      setModulesData(modulesResult);
+      setLessonsData(lessonsResult);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -66,7 +64,8 @@ const Lessons = () => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
-  }, []);
+    fetchModulesAndLessons();
+  }, [navigate, selectedCourse]);
 
   if (loading) return <Loading />;
   if (error) return <p>Error: {error}</p>;
@@ -104,34 +103,47 @@ const Lessons = () => {
         <aside className="w-full sm:w-1/5 bg-gray-100 dark:bg-gray-800 p-4 flex flex-col space-y-4">
           {modulesData.length > 0 ? (
             modulesData.map((module) => (
-              <div key={module.id} className="p-2 bg-gray-700 rounded-lg">
-                <h3 className="text-lg font-bold text-white">{module.title}</h3>
-                {lessonsData[module.id] ? (
-                  <ul className="mt-2">
-                    {lessonsData[module.id].map((lesson) => (
-                      <li
-                        key={lesson.id}
-                        className="text-gray-300 ml-4 list-disc"
-                      >
-                        {lesson.title}
-                        {console.log(lesson)}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-500">Darsliklar yo'q</p>
-                )}
+              <div
+                key={module.id}
+                className="p-2 flex items-center gap-2 bg-white dark:bg-gray-700 rounded shadow"
+                onClick={() => handleSelectModule(module.id)}
+              >
+                <h3 className="text-lg font-medium text-black dark:text-white">
+                  {module.title}
+                </h3>
+                { }
+                {(module.lessons).map((e)=>(console.log(e)))}
               </div>
             ))
           ) : (
-            <p className="text-gray-500">Modullar topilmadi.</p>
+            <p className="text-black dark:text-white">Modullar mavjud emas</p>
           )}
         </aside>
 
         <section className="flex items-center justify-center flex-col bg-gray-100 w-full dark:bg-gray-900 p-4">
           <h2 className="text-2xl font-semibold text-black dark:text-white">
-            Modul va darsliklar ma'lumotlari
+            Darslik
           </h2>
+          {lessonsData.length > 0 ? (
+            lessonsData.map((lesson) => (
+              <div
+                key={lesson.id}
+                className="p-4 bg-white dark:bg-gray-700 rounded shadow w-full mb-4"
+              >
+                <p className="text-black dark:text-white font-bold">
+                  {lesson.title}
+                </p>
+                <p className="text-black dark:text-white">
+                  {lesson.description}
+                  {console.log(lesson)}
+
+                </p>
+                <video controls src={lesson.video}></video>
+              </div>
+            ))
+          ) : (
+            <p className="text-black dark:text-white">Darsliklar mavjud emas</p>
+          )}
         </section>
       </main>
     </div>
