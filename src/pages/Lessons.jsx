@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import Languages from "../components/Languages";
+import { Video } from "reactjs-media";
 
 const Lessons = () => {
   const [theme, setTheme] = useState("dark");
@@ -18,9 +19,12 @@ const Lessons = () => {
   const selectedLesson = async (lessonId) => {
     try {
       const token = localStorage.getItem("access_token");
-      const response = await fetch(`http://api.eagledev.uz/api/Lessons/${lessonId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `http://api.eagledev.uz/api/Lessons/${lessonId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Error fetching lesson details");
@@ -101,7 +105,10 @@ const Lessons = () => {
   return (
     <div className="h-screen flex flex-col">
       <header className="flex items-center justify-around bg-white dark:bg-gray-800 px-4 py-3 border-b dark:border-gray-500">
-        <a className="text-xl font-semibold w-7/12 text-black dark:text-white" href="#">
+        <a
+          className="text-xl font-semibold w-7/12 text-black dark:text-white"
+          href="#"
+        >
           Academy
         </a>
         <div className="flex items-center space-x-5">
@@ -169,12 +176,24 @@ const Lessons = () => {
           </h2>
           {selectedLessonData ? (
             <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded shadow">
-              <h3 className="text-lg font-semibold text-black dark:text-white">
+              <h3
+                className="text-lg font-semibold text-black dark:text-white select-none" // Matn yoki elementlarni tanlashni bloklash
+                onContextMenu={(e) => e.preventDefault()}
+              >
                 {selectedLessonData.title}
                 {/* {console.log(selectedLessonData)} */}
-                <video controls src={selectedLessonData.video}></video>
+                <Video
+                  url={selectedLessonData.video}
+                  playing
+                  controls
+                  width="100%"
+                  height="auto"
+                  controlsList="nodownload nofullscreen"
+                />
               </h3>
-              <p className="text-black dark:text-white">{selectedLessonData.content}</p>
+              <p className="text-black dark:text-white">
+                {selectedLessonData.content}
+              </p>
               {/* Add more details as needed */}
             </div>
           ) : (
