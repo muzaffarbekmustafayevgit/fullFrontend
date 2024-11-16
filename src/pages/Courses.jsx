@@ -160,6 +160,7 @@ const Courses = () => {
                   className="border rounded px-2 py-3 dark:text-white dark:bg-gray-700 cursor-pointer hover:bg-gray-200"
                 >
                   {category}
+                  {localStorage.setItem('category',category)}
 
                   <br />
                 </div>
