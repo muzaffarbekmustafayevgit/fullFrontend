@@ -62,7 +62,6 @@ const Profile = () => {
           "http://api.eagledev.uz/api/user/profile/",
           {
             method: "GET",
-            // mode: "no-cors",
             headers: {
               Authorization: `Bearer ${token}`, // Tokenni Authorization headeriga qo'shish
             },
@@ -73,9 +72,14 @@ const Profile = () => {
 
         const result = await response.json();
         setData(result);
+
         // localStorage.setItem("user", data.user_obj.username);
         // console.log(result);
-        console.log("your name " + result.user_obj.username);
+         if(result.user_obj.role==="moderator"){
+          navigate(
+          "/moderator"
+          )
+         }
       } catch (err) {
         setError(err.message);
       } finally {

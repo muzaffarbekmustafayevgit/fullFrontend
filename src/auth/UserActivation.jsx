@@ -1,17 +1,32 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 function UserActivation() {
   const savedEmail = localStorage.getItem("email");
-  const [email, setEmail] = useState("");
-
+  const [email, setEmail] = useState(savedEmail || ""); // Initialize with saved email or empty string
   const [password, setPassword] = useState("");
-
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const url = "http://api.eagledev.uz/api/user/activation/";
 
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (savedEmail) {
+      setEmail(savedEmail); // Set email when component mounts if it's available in localStorage
+    }
+  }, [savedEmail]);
+
   const handleActivate = async (e) => {
     e.preventDefault();
+
+    // Check if email and password are provided
+    if (!email || !password) {
+      setError("Email and activation code are required.");
+      return;
+    }
+
+    console.log("Email:", email); // Debugging line
+    console.log("Password:", password); // Debugging line
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -21,7 +36,7 @@ function UserActivation() {
         mode: "cors",
         body: JSON.stringify({
           email: email,
-          password: password,
+          activation_code: password,
         }),
       });
 
@@ -31,12 +46,15 @@ function UserActivation() {
 
       const data = await response.json();
       console.log("Signup successful:", data);
+      if(response.ok){
+        navigate('/courses')
+      }
       setSuccess("Signup successful!");
-      setError(""); // clear any previous error message
+      setError(""); // Clear any previous error message
     } catch (err) {
       console.error("Signup failed:", err);
-      setError("Signup failed. Please try again.");
-      setSuccess(""); // clear any previous success message
+      setError(err.message || "Signup failed. Please try again.");
+      setSuccess(""); // Clear any previous success message
     }
   };
 
@@ -44,7 +62,7 @@ function UserActivation() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg dark:bg-gray-800">
         <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
-          Sign Up
+          User Activation
         </h2>
         <form className="space-y-6" onSubmit={handleActivate}>
           <div>
@@ -58,8 +76,8 @@ function UserActivation() {
               type="email"
               id="email"
               name="email"
-              value={savedEmail}
-              onChange={(e) => setEmail(savedEmail)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)} // Allow email editing
               required
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
             />
@@ -69,7 +87,7 @@ function UserActivation() {
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              Password
+              Activation Code
             </label>
             <input
               type="password"
@@ -87,7 +105,7 @@ function UserActivation() {
               type="submit"
               className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
             >
-              Sign Up
+              Activate Account
             </button>
           </div>
         </form>

@@ -10,8 +10,8 @@ const Lessons = () => {
   const [lessonsData, setLessonsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [openModuleId, setOpenModuleId] = useState(null); // State to track open module
-  const [selectedLessonData, setSelectedLessonData] = useState(null); // State for selected lesson data
+  const [openModuleId, setOpenModuleId] = useState(1); // State to track open module
+  const [selectedLessonData, setSelectedLessonData] = useState(1); // State for selected lesson data
   const navigate = useNavigate();
   const selectedCourse = localStorage.getItem("selectedCoursesIndex") || 1;
   const selectedModule = localStorage.getItem("selectedModulesIndex") || 1;
@@ -72,6 +72,7 @@ const Lessons = () => {
         `http://api.eagledev.uz/api/Lessons/?id=${1}&is_open=&module=${1}`,
         {
           headers: { Authorization: `Bearer ${token}` },
+          
         }
       );
       if (!lessonsResponse.ok) throw new Error("Error fetching lessons data");

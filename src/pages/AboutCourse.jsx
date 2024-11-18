@@ -79,7 +79,11 @@ function AboutCourse() {
     setTheme(savedTheme);
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
   }, []);
-
+  useEffect(() => {
+    document.title = category.toString() ;
+  
+    
+  }, []);
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -161,71 +165,79 @@ function AboutCourse() {
               </a>
             </div>
           </aside>
-          <section className="flex-1 bg-white dark:bg-gray-900 p-4">
-            <div className="p-4">
-              <pre className="text-lg dark:text-white font-semibold mb-4">
+          <section className="flex-1 bg-white dark:bg-gray-950 ">
+            <div className="flex flex-col items-center justify-center  ">
+              <p className="mb-2 mt-2      dark:text-white font-semibold ">
+                {" "}
                 Kurslar{" "}
                 <FaChevronRight className="dark:text-white right-0 inline-block " />{" "}
                 {category}
-              </pre>
+              </p>
+              <title>{category}</title>
+              <div className="h-full border-gray-100   flex ">
+                <div className=" flex  flex-wrap">
+                  <div className="flex justify-center w-full ">
+                    <div className="w-11/12  flex justify-between p-5   dark:bg-gray-800">
+                      <div className="w-1/2">
+                        <strong className="dark:text-white text-lg">
+                          {category}
+                        </strong>{" "}
+                        <p className="dark:text-white">
+                          {courseData.description}
+                        </p>
+                        <p className="dark:text-white">
+                          <strong className="dark:text-white">
+                            Umumiy davomiylik:
+                          </strong>{" "}
+                          {courseData.total_duration} soat
+                        </p>
+                      </div>
 
-              <div className="h-full border-gray-100 overflow-y-scroll  grid  sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {/* {module.modules.map((item) => (
-                  <div
-                    key={item.id}
-                    className="border rounded px-2 py-3 dark:text-white dark:bg-gray-700 cursor-pointer hover:bg-gray-200"
-                  >
-                    <h3>{item.title}</h3>
-                    <p>Order: {item.order}</p>
+                      <img
+                        src={courseData.thumbnail}
+                        alt={`${courseData.title} thumbnail`}
+                        className=" object-contain w-80"
+                      />
+                    </div>
                   </div>
-                ))} */}
-                {/* {console.log(module)} */}
-                <div>
-                  <img
-                    src={courseData.thumbnail}
-                    alt={`${courseData.title} thumbnail`}
-                  />
-                  <p>{courseData.description}</p>
-                  <p>
-                    <strong>Umumiy davomiylik:</strong>{" "}
-                    {courseData.total_duration} soat
-                  </p>
-                  <p>
-                    <strong>Narxi:</strong>{" "}
-                    {courseData.is_free ? "Bepul" : `${courseData.price} USD`}
-                  </p>
-
-                  <h2>Modullar</h2>
-                  <ul>
-                    {courseData.modules.map((module, moduleIndex) => (
-                      <li key={module.id}>
+                  <div className="flex justify-center w-full mt-8  ">
+                    {" "}
+                    <div className="w-11/12 flex justify-between   ">
+                      <div className="dark:bg-gray-800 w-7/12 p-10 flex flex-col">
+                        <pre className="dark:text-white ">Modullar :</pre>
+                        <ul className="flex flex-col flex-wrap ">
+                          {courseData.modules.map((module, moduleIndex) => (
+                            <li key={module.id}>
+                              <pre className="dark:text-white">
+                                # {module.title}
+                              </pre>
+                              {selectedModule === moduleIndex && (
+                                <ul>
+                                  {module.lessons.map((lesson, lessonIndex) => (
+                                    <li key={lessonIndex}># {lesson}</li>
+                                  ))}
+                                </ul>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className=" w-4/12 flex-col items-center flex justify-start bg-gray-100">
+                        <p>
+                          <strong>Narxi:</strong>{" "}
+                          {courseData.is_free
+                            ? "Bepul"
+                            : `${courseData.price} USD`}
+                        </p>
                         <button
-                          onClick={() =>
-                            setSelectedModule(
-                              moduleIndex === selectedModule
-                                ? null
-                                : moduleIndex
-                            )
-                          }
+                          onClick={handleNavigate}
+                          className="border rounded p-3 bg-green-700"
                         >
-                          {module.title}
+                          kirish
                         </button>
-                        {selectedModule === moduleIndex && (
-                          <ul>
-                            {module.lessons.map((lesson, lessonIndex) => (
-                              <li key={lessonIndex}>{lesson}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                  <button
-                    onClick={handleNavigate}
-                    className="border rounded p-3 bg-green-700"
-                  >
-                    kirish
-                  </button>
+                      </div>
+                    </div>{" "}
+                  </div>
                 </div>
               </div>
             </div>

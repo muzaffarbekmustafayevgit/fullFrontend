@@ -152,7 +152,7 @@ const Courses = () => {
             <h3 className="text-lg dark:text-white font-semibold mb-4">
               Kurslar:
             </h3>
-            <div className="max-h-[550px] overflow-y-scroll grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="max-h-[550px]  grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {categories.map((category, index) => (
                 <div
                   key={index}

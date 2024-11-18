@@ -16,6 +16,7 @@ import Courses from "./pages/Courses";
 import AboutCourse from "./pages/AboutCourse";
 import UserActivation from "./auth/UserActivation";
 import Lessons from "./pages/Lessons";
+import ModeratorPage from "./pages/Moderator/ModeratorPage";
 // import Loading from "./components/Loading";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -34,6 +35,7 @@ root.render(
       <Route path="/modules" element={<AboutCourse />} />
       <Route path="/activation" element={<UserActivation/>}/>
       <Route path="/lessons" element={<Lessons/>}/>
+      <Route path="/moderator" element={<ModeratorPage/>}/>
     </Routes>
   </BrowserRouter>
 );

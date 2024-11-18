@@ -53,13 +53,12 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-
+        
         if (data.access && data.refresh) {
           // Store tokens and user data
           localStorage.setItem("access_token", data.access);
           localStorage.setItem("refresh_token", data.refresh);
-          
-          console.log(data);
+
           setError(null);
 
           // Navigate to the profile page
