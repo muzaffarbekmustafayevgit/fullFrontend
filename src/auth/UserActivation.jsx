@@ -45,14 +45,12 @@ function UserActivation() {
       }
 
       const data = await response.json();
-      console.log("Signup successful:", data);
       if(response.ok){
-        navigate('/courses')
+        navigate('/profile')
       }
       setSuccess("Signup successful!");
       setError(""); // Clear any previous error message
     } catch (err) {
-      console.error("Signup failed:", err);
       setError(err.message || "Signup failed. Please try again.");
       setSuccess(""); // Clear any previous success message
     }

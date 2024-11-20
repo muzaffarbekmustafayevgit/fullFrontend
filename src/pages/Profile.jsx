@@ -21,15 +21,15 @@ const Profile = () => {
   const [error, setError] = useState(null);
   useEffect(() => {
     const handleUnload = () => {
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem("accessToken");
     };
 
     // `unload` hodisasiga tinglovchi qo'shiladi
-    window.addEventListener('unload', handleUnload);
+    window.addEventListener("unload", handleUnload);
 
     // Tozalanish uchun tinglovchi olib tashlanadi
     return () => {
-      window.removeEventListener('unload', handleUnload);
+      window.removeEventListener("unload", handleUnload);
     };
   }, []);
   const navigate = useNavigate();
@@ -57,7 +57,6 @@ const Profile = () => {
           setError("Access token mavjud emas");
           return;
         }
-
         const response = await fetch(
           "http://api.eagledev.uz/api/user/profile/",
           {
@@ -65,21 +64,16 @@ const Profile = () => {
             headers: {
               Authorization: `Bearer ${token}`, // Tokenni Authorization headeriga qo'shish
             },
-          }
+          } 
         );
 
         if (!response.ok) throw new Error("Failed to fetch profile data");
 
         const result = await response.json();
         setData(result);
-
-        // localStorage.setItem("user", data.user_obj.username);
-        // console.log(result);
-         if(result.user_obj.role==="moderator"){
-          navigate(
-          "/moderator"
-          )
-         }
+        // if (result.user_obj.role === "moderator") {
+        //   navigate("/moderator");
+        // }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -195,7 +189,7 @@ const Profile = () => {
               )}
 
               <p>
-                <strong >Name:</strong> {data.user_obj.username}
+                <strong>Name:</strong> {data.user_obj.username}
               </p>
               <p>
                 <strong>Email:</strong> {data.user_obj.email}

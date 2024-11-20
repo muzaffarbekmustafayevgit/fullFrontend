@@ -62,7 +62,7 @@ const Login = () => {
           setError(null);
 
           // Navigate to the profile page
-          navigate("/profile");
+          navigate("/role");
         } else {
           setError("Login failed. Incorrect credentials.");
         }
