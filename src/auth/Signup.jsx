@@ -19,7 +19,7 @@ const Signup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        mode: 'cors',
+        mode: "cors",
         body: JSON.stringify({
           username: name,
           email: email,
@@ -35,12 +35,12 @@ const Signup = () => {
 
       const data = await response.json();
       console.log("Signup successful:", data);
-      navigate('/activation')
+      navigate("/activation");
       setSuccess("Signup successful!");
       console.log(response.status);
 
       localStorage.setItem("email", email);
-      localStorage.removeItem('user')
+      localStorage.removeItem("user");
       setError(""); // clear any previous error message
     } catch (err) {
       console.error("Signup failed:", err);
@@ -151,7 +151,9 @@ const Signup = () => {
           </div>
         </form>
         {error && <p className="text-sm text-center text-red-500">{error}</p>}
-        {success && <p className="text-sm text-center text-green-500">{success}</p>}
+        {success && (
+          <p className="text-sm text-center text-green-500">{success}</p>
+        )}
         <p className="text-sm text-center text-gray-600 dark:text-gray-300">
           Already have an account?{" "}
           <a href="/login" className="text-blue-600 hover:text-blue-500">

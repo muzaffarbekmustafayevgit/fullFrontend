@@ -65,7 +65,9 @@ function Role() {
     else  if (data && data.user_obj && data.user_obj.role === 'admin') {
         navigate('/admin');
       }
-
+      else  if (data && data.user_obj && data.user_obj.role === '') {
+        navigate('/courses');
+      }
   }, [data, navigate]);
 
   if (loading) {

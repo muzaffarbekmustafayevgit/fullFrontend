@@ -190,6 +190,7 @@ const Profile = () => {
 
               <p>
                 <strong>Name:</strong> {data.user_obj.username}
+                {console.log(data.user_obj)}
               </p>
               <p>
                 <strong>Email:</strong> {data.user_obj.email}

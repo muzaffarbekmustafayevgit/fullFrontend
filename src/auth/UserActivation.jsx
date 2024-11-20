@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Timer from "../components/Timer";
 function UserActivation() {
   const savedEmail = localStorage.getItem("email");
   const [email, setEmail] = useState(savedEmail || ""); // Initialize with saved email or empty string
@@ -14,7 +15,6 @@ function UserActivation() {
       setEmail(savedEmail); // Set email when component mounts if it's available in localStorage
     }
   }, [savedEmail]);
-
   const handleActivate = async (e) => {
     e.preventDefault();
 
@@ -46,7 +46,7 @@ function UserActivation() {
 
       const data = await response.json();
       if(response.ok){
-        navigate('/profile')
+        navigate('/role')
       }
       setSuccess("Signup successful!");
       setError(""); // Clear any previous error message
@@ -63,7 +63,7 @@ function UserActivation() {
           User Activation
         </h2>
         <form className="space-y-6" onSubmit={handleActivate}>
-          <div>
+          {/* <div>
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -75,11 +75,13 @@ function UserActivation() {
               id="email"
               name="email"
               value={email}
+              readOnly
               onChange={(e) => setEmail(e.target.value)} // Allow email editing
               required
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
             />
-          </div>
+          </div> */}
+          <Timer/>
           <div>
             <label
               htmlFor="password"
