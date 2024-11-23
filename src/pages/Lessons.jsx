@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 
@@ -36,7 +36,7 @@ const LessonItem = ({ lessonData }) => (
     {lessonData ? (
       <>
         <h3 className="text-lg font-semibold text-black dark:text-white">{lessonData.title}</h3>
-        <p className="text-black dark:text-white">{lessonData.module || "Dars maʼlumoti yoʻq"}</p>
+        <video src={lessonData.video} controls></video>
       </>
     ) : (
       <p className="text-black dark:text-white">No lesson selected</p>
@@ -45,16 +45,21 @@ const LessonItem = ({ lessonData }) => (
 );
 
 const Lessons = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
-  const [modulesData, setModulesData] = useState([]);
-  const [selectedLessonData, setSelectedLessonData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [openModuleId, setOpenModuleId] = useState(null);
-  const [language, setLanguage] = useState(localStorage.getItem("language") || "uz");
+  const [state, setState] = useState({
+    theme: localStorage.getItem("theme") || "dark",
+    modulesData: [],
+    selectedLessonData: null,
+    loading: true,
+    error: null,
+    openModuleId: null,
+    language: localStorage.getItem("language") || "uz",
+  });
 
   const navigate = useNavigate();
-  const selectedCourse = localStorage.getItem("selectedCoursesIndex") || 1;
+  const selectedCourse = parseInt(localStorage.getItem("selectedCoursesIndex"), 10); // Ensure it's a number
+
+  // Default to 1 if selectedCourse is invalid
+  const validCourse = isNaN(selectedCourse) ? 1 : selectedCourse;
 
   const messages = {
     uz: { selectLesson: "Darslikni tanlang", noModules: "Modullar mavjud emas", lessons: "Darsliklar" },
@@ -64,8 +69,11 @@ const Lessons = () => {
 
   // Mavzuni o'zgartirish
   const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
+    const newTheme = state.theme === "light" ? "dark" : "light";
+    setState((prevState) => ({
+      ...prevState,
+      theme: newTheme,
+    }));
     document.documentElement.classList.toggle("dark", newTheme === "dark");
     localStorage.setItem("theme", newTheme);
   };
@@ -73,12 +81,15 @@ const Lessons = () => {
   // Tilni o'zgartirish
   const handleLanguageChange = (event) => {
     const selectedLanguage = event.target.value;
-    setLanguage(selectedLanguage);
+    setState((prevState) => ({
+      ...prevState,
+      language: selectedLanguage,
+    }));
     localStorage.setItem("language", selectedLanguage);
   };
 
   // Modullarni olish
-  const fetchModulesAndLessons = async () => {
+  const fetchModulesAndLessons = useCallback(async () => {
     const token = localStorage.getItem("access_token");
     if (!token) {
       navigate("/login");
@@ -87,11 +98,11 @@ const Lessons = () => {
 
     try {
       const response = await fetch(
-        `http://api.eagledev.uz/api/Modules/?course=${selectedCourse}`,
+        `http://api.eagledev.uz/api/Modules/?course=${validCourse}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Accept-Language": language,
+            "Accept-Language": state.language,
           },
         }
       );
@@ -99,23 +110,21 @@ const Lessons = () => {
       if (!response.ok) throw new Error("Error fetching modules data");
 
       const modulesResult = await response.json();
-      setModulesData(modulesResult);
-      if (modulesResult.length > 0) {
-        const firstModule = modulesResult[0];
-        const firstLesson = firstModule.lessons?.[0]; // Birinchi modul va darsni tanlash
-        if (firstLesson) {
-          setSelectedLessonData(firstLesson);
-          setOpenModuleId(firstModule.id); // Default modulni ochiq qilish
-          localStorage.setItem("selectedLessonsIndex", firstLesson.id);
-          localStorage.setItem("selectedModulesIndex", firstModule.id);
+      setState((prevState) => {
+        if (modulesResult.length > 0) {
+          const firstModule = modulesResult[0];
+          const firstLesson = firstModule.lessons?.[0]; // Select the first lesson by default
+          if (firstLesson) {
+            localStorage.setItem("selectedLessonsIndex", firstLesson.id);
+            localStorage.setItem("selectedModulesIndex", firstModule.id);
+          }
         }
-      }
+        return { ...prevState, modulesData: modulesResult, loading: false };
+      });
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      setState((prevState) => ({ ...prevState, error: err.message, loading: false }));
     }
-  };
+  }, [state.language, validCourse]);
 
   // Darsni tanlash
   const fetchLessonDetails = async (lessonId) => {
@@ -129,31 +138,45 @@ const Lessons = () => {
       const response = await fetch(`http://api.eagledev.uz/api/Lessons/${lessonId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Accept-Language": language,
+          "Accept-Language": state.language,
         },
       });
 
       if (!response.ok) throw new Error("Error fetching lesson details");
 
       const lessonDetails = await response.json();
-      setSelectedLessonData(lessonDetails);
+      setState((prevState) => ({
+        ...prevState,
+        selectedLessonData: lessonDetails,
+      }));
       localStorage.setItem("selectedLessonsIndex", lessonId);
     } catch (err) {
-      setError(err.message);
+      setState((prevState) => ({ ...prevState, error: err.message }));
     }
   };
 
   const handleSelectModule = (moduleId) => {
-    setOpenModuleId(openModuleId === moduleId ? null : moduleId);
+    setState((prevState) => ({
+      ...prevState,
+      openModuleId: prevState.openModuleId === moduleId ? null : moduleId,
+    }));
   };
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.classList.toggle("dark", state.theme === "dark");
     fetchModulesAndLessons();
-  }, [theme, language]);
+  }, [state.theme, state.language, fetchModulesAndLessons]);
 
-  if (loading) return <Loading />;
-  if (error) return <p>Error: {error}</p>;
+  useEffect(() => {
+    // If there is a selected lesson in localStorage, fetch its details
+    const selectedLessonId = localStorage.getItem("selectedLessonsIndex");
+    if (selectedLessonId) {
+      fetchLessonDetails(selectedLessonId);
+    }
+  }, []); // Fetch the selected lesson when the component mounts
+
+  if (state.loading) return <Loading />;
+  if (state.error) return <p>Error: {state.error}</p>;
 
   return (
     <div className="h-screen flex flex-col">
@@ -164,7 +187,7 @@ const Lessons = () => {
             Landing
           </Link>
           <select
-            value={language}
+            value={state.language}
             onChange={handleLanguageChange}
             className="dark:text-white dark:bg-gray-800"
           >
@@ -173,31 +196,31 @@ const Lessons = () => {
             <option value="en">English</option>
           </select>
           <button onClick={toggleTheme} className="text-xl">
-            {theme === "light" ? "🌙" : "☀️"}
+            {state.theme === "light" ? "🌙" : "☀️"}
           </button>
         </div>
       </header>
       <main className="flex flex-1">
         <aside className="w-1/4 overflow-auto p-4 bg-gray-100 dark:bg-gray-800">
-          {modulesData.length > 0 ? (
-            modulesData.map((module) => (
+          {state.modulesData.length > 0 ? (
+            state.modulesData.map((module) => (
               <ModuleItem
                 key={module.id}
                 module={module}
-                openModuleId={openModuleId}
+                openModuleId={state.openModuleId}
                 onSelectModule={handleSelectModule}
                 onSelectLesson={fetchLessonDetails}
               />
             ))
           ) : (
-            <p className="text-black dark:text-white">{messages[language].noModules}</p>
+            <p className="text-black dark:text-white">{messages[state.language].noModules}</p>
           )}
         </aside>
         <section className="flex-1 p-4 bg-gray-100 dark:bg-gray-900">
-          {selectedLessonData ? (
-            <LessonItem lessonData={selectedLessonData} />
+          {state.selectedLessonData ? (
+            <LessonItem lessonData={state.selectedLessonData} />
           ) : (
-            <p className="text-black dark:text-white">{messages[language].selectLesson}</p>
+            <p className="text-black dark:text-white">{messages[state.language].selectLesson}</p>
           )}
         </section>
       </main>

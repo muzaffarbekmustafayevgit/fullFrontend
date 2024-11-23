@@ -30,14 +30,13 @@ root.render(
       {/* <Route path="/login" element={<Login />} />  */}
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgotpassword" element={<ForgotPassword />} />
-      
       <Route path="/admin" element={<AdminPanel/>}/>
       <Route path="/contact" element={<Contact />} />
       <Route path="/courses/login" element={<Login />} />
       <Route path="/profile/" element={<Profile />} />
       <Route path="/courses" element={<Courses />} />
       <Route path="/languages" element={<Languages />} />
-      <Route path="/modules" element={<AboutCourse />} />
+      <Route path="/courses/aboutCourse" element={<AboutCourse />} />
       <Route path="/activation" element={<UserActivation/>}/>
       <Route path="/lessons" element={<Lessons/>}/>
       <Route path="/moderator" element={<ModeratorPage/>}/>

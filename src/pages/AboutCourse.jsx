@@ -20,36 +20,43 @@ function AboutCourse() {
 
   // Fetch data function
   const fetchData = async () => {
+    const courseId = localStorage.getItem("courseId");
     const token = localStorage.getItem("access_token");
+
+    if (!courseId) {
+      navigate("/courses");
+      return;
+    }
 
     if (!token) {
       navigate("/login");
-    } else {
-      try {
-        const response = await fetch(`http://api.eagledev.uz/api/Courses/${index + 1}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Accept-Language": language,
-          },
-        });
+      return;
+    }
 
-        if (!response.ok) throw new Error("Ma'lumotlarni olishda xatolik yuz berdi");
+    try {
+      const response = await fetch(`http://api.eagledev.uz/api/Courses/${courseId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Accept-Language": language,
+        },
+      });
 
-        const result = await response.json();
-        localStorage.setItem("selectedCourse", category);
-        localStorage.setItem("selectedCoursesIndex", index + 1);
-        localStorage.removeItem("selectedCategory");
+      if (!response.ok) throw new Error("Ma'lumotlarni olishda xatolik yuz berdi");
 
-        setCourseData(result);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+      const result = await response.json();
+      // localStorage.setItem("selectedCourse", category);
+      localStorage.setItem("selectedCoursesIndex", index + 1);
+      localStorage.removeItem("selectedCategory");
+
+      setCourseData(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
-
+ const courseName=localStorage.getItem("course")
   // Fetch data on mount and when language changes
   useEffect(() => {
     fetchData();
@@ -61,10 +68,7 @@ function AboutCourse() {
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
   }, []);
 
-  useEffect(() => {
-    document.title = category.toString();
-  }, [category]);
-
+ 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -159,14 +163,14 @@ function AboutCourse() {
         <section className="flex-1 bg-white dark:bg-gray-950">
           <div className="flex flex-col items-center justify-center">
             <p className="mb-2 mt-2 dark:text-white font-semibold">
-              Kurslar <FaChevronRight className="dark:text-white right-0 inline-block " /> {category}
+              Kurslar <FaChevronRight className="dark:text-white right-0 inline-block " /> {courseName}
             </p>
             <div className="h-full border-gray-100 flex">
               <div className="flex flex-wrap">
                 <div className="flex justify-center w-full">
                   <div className="w-11/12 flex justify-between p-5 dark:bg-gray-800">
                     <div className="w-1/2">
-                      <strong className="dark:text-white text-lg">{category}</strong>
+                      <strong className="dark:text-white text-lg">{courseName}</strong>
                       <p className="dark:text-white">{courseData.description}</p>
                       <p className="dark:text-white">
                         <strong className="dark:text-white">Umumiy davomiylik:</strong> {courseData.total_duration} soat
@@ -184,33 +188,35 @@ function AboutCourse() {
                 <div className="flex justify-center w-full mt-8">
                   <div className="w-11/12 flex justify-between">
                     <div className="dark:bg-gray-800 w-7/12 p-10 flex flex-col">
-                      <pre className="dark:text-white">Modullar :</pre>
-                      <ul className="flex flex-col flex-wrap">
-                        {courseData.modules.map((module, moduleIndex) => (
-                          <li key={module.id}>
-                            <pre className="dark:text-white" onClick={() => handleModuleClick(moduleIndex)}>
-                              # {module.title}
-                            </pre>
-                            {selectedModule === moduleIndex && (
-                              <ul>
-                                {module.lessons.map((lesson, lessonIndex) => (
-                                  <li key={lessonIndex}># {lesson}</li>
-                                ))}
-                              </ul>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
+                      <pre className="dark:text-white font-semibold">
+                        <h3>Modullar</h3>
+                        <div className="border-b dark:border-gray-500 mt-2" />
+                        <ul className="space-y-4 mt-4">
+                          {courseData.modules?.map((module, index) => (
+                          
+                            <li
+                              key={module.id}
+                              className="w-full border-b dark:border-gray-500"
+                              onClick={() => handleModuleClick(index)}
+                            >  
+                              <div className="cursor-pointer dark:text-white">
+                                {module.title}
+                                {selectedModule === index && (
+                                  <div className="pl-4 ">{module.description}</div>
+                                )}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </pre>
                     </div>
 
-                    <div className="w-4/12 flex-col items-center flex justify-center dark:bg-gray-800">
-                      <p className="dark:text-white">
-                        <strong>Narxi:</strong>{" "}
-                        {courseData.is_free ? "Bepul" : `${courseData.price} UZS`}
-                      </p>
-                      <hr />
-                      <button onClick={handleNavigate} className="border border-black dark:border-white w-5/6 rounded p-3 dark:bg-gray-600 dark:text-white">
-                        Kirish
+                    <div className="w-4/12 p-5 dark:bg-gray-800">
+                      <button
+                        onClick={handleNavigate}
+                        className="px-5 py-2 bg-blue-500 text-white rounded-lg"
+                      >
+                        Kursga o'tish
                       </button>
                     </div>
                   </div>
