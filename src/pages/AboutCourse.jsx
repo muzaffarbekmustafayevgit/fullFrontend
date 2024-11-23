@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Loading from "../components/Loading";
 import { Link } from "react-router-dom";
-import { FaTelegramPlane, FaYoutube, FaInstagram, FaFacebook } from "react-icons/fa";
-import { FaHome, FaChevronRight } from "react-icons/fa";
+import { FaTelegramPlane, FaYoutube, FaInstagram, FaFacebook, FaHome, FaChevronRight } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 
@@ -19,41 +18,42 @@ function AboutCourse() {
   const [selectedModule, setSelectedModule] = useState(null);
   const [language, setLanguage] = useState(localStorage.getItem("language") || "uz");
 
-  useEffect(() => {
+  // Fetch data function
+  const fetchData = async () => {
     const token = localStorage.getItem("access_token");
 
     if (!token) {
       navigate("/login");
     } else {
-      const fetchData = async () => {
-        try {
-          const language = localStorage.getItem("language") || "uz"; // Get language from localStorage
-          const response = await fetch(`http://api.eagledev.uz/api/Courses/${index + 1}`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Accept-Language': language, // Add language to the Accept-Language header
-            },
-          });
+      try {
+        const response = await fetch(`http://api.eagledev.uz/api/Courses/${index + 1}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Accept-Language": language,
+          },
+        });
 
-          if (!response.ok) throw new Error("Ma'lumotlarni olishda xatolik yuz berdi");
+        if (!response.ok) throw new Error("Ma'lumotlarni olishda xatolik yuz berdi");
 
-          const result = await response.json();
-          localStorage.setItem("selectedCourse", category);
-          localStorage.setItem("selectedCoursesIndex", index + 1);
-          localStorage.removeItem("selectedCategory");
+        const result = await response.json();
+        localStorage.setItem("selectedCourse", category);
+        localStorage.setItem("selectedCoursesIndex", index + 1);
+        localStorage.removeItem("selectedCategory");
 
-          setCourseData(result);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchData();
+        setCourseData(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [navigate, index]);
+  };
+
+  // Fetch data on mount and when language changes
+  useEffect(() => {
+    fetchData();
+  }, [language]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "light";

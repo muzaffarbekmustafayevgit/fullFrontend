@@ -17,19 +17,20 @@ import AboutCourse from "./pages/AboutCourse";
 import UserActivation from "./auth/UserActivation";
 import Lessons from "./pages/Lessons";
 import ModeratorPage from "./pages/Moderator/ModeratorPage";
-import Role from "./pages/Role";
 import AdminPanel from "./pages/admin/AdminPanel";
 // import Loading from "./components/Loading";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <Routes>
-      <Route path="/" exact element={<Home />} />
+      <Route path="/" exact element={<Login />} />
       <Route path="*" element={<NotFound />} />
-      <Route path="/login" element={<Login />} />
+      
+      <Route path="/home" element={<Home/>} />
+      {/* <Route path="/login" element={<Login />} />  */}
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgotpassword" element={<ForgotPassword />} />
-      <Route path="/role" element={<Role/>}/>
+      
       <Route path="/admin" element={<AdminPanel/>}/>
       <Route path="/contact" element={<Contact />} />
       <Route path="/courses/login" element={<Login />} />

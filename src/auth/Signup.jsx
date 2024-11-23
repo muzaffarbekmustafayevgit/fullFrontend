@@ -1,165 +1,206 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 const Signup = () => {
   const [name, setName] = useState("");
-  const [fullname, setFullname] = useState(""); // Corrected typo
-  const [military_unit, setMilitary_unit] = useState("");
+  const [fullname, setFullname] = useState("");
+  const [militaryUnit, setMilitaryUnit] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [activationCode, setActivationCode] = useState("");
+  const [step, setStep] = useState("signup"); // "signup" yoki "activation"
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const url = "http://api.eagledev.uz/api/user/register/";
+
+  const signupUrl = "http://api.eagledev.uz/api/user/register/";
+  const activationUrl = "http://api.eagledev.uz/api/user/activation/";
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await fetch(url, {
+      const response = await fetch(signupUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        mode: "cors",
         body: JSON.stringify({
           username: name,
           email: email,
           password: password,
           full_name: fullname,
-          military_unit: military_unit,
+          military_unit: militaryUnit,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Signup failed. Please try again.");
-      }
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message || "Roʻyxatdan oʻtishda xatolik yuz berdi.");
+
+      setSuccess("Roʻyxatdan oʻtish muvaffaqiyatli! Hisobni faollashtiring.");
+      setStep("activation");
+      localStorage.setItem("email", email);
+      setError("");
+    } catch (err) {
+      setError(err.message || "Roʻyxatdan oʻtishda xatolik yuz berdi.");
+      setSuccess("");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleActivation = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch(activationUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          activation_code: activationCode,
+        }),
+      });
 
       const data = await response.json();
-      console.log("Signup successful:", data);
-      navigate("/activation");
-      setSuccess("Signup successful!");
-      console.log(response.status);
+      if (!response.ok)
+        throw new Error(data.message || "Hisobni faollashtirish muvaffaqiyatsiz bo'ldi.");
 
-      localStorage.setItem("email", email);
-      localStorage.removeItem("user");
-      setError(""); // clear any previous error message
+      localStorage.setItem("access_token", data.access_token);
+      navigateToRole(data.user_obj ? data.user_obj.role : ""); // Foydalanuvchi roliga ko'ra yo'naltirish
+      setError("");
     } catch (err) {
-      console.error("Signup failed:", err);
-      setError("Signup failed. Please try again.");
-      setSuccess(""); // clear any previous success message
+      setError(err.message || "Faollashtirishda xatolik yuz berdi.");
+      setSuccess("");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const navigateToRole = (role) => {
+    const roleRoutes = {
+      moderator: "/moderator",
+      student: "/courses",
+      admin: "/admin",
+    };
+
+    // Agar ro'l mavjud bo'lmasa yoki tanilgan ro'llardan bo'lmasa, /home ga yo'naltirish
+    navigate(roleRoutes[role] || "/home");
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg dark:bg-gray-800">
-        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
-          Sign Up
-        </h2>
-        <form className="space-y-6" onSubmit={handleSignup}>
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="fullname"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Fullname
-            </label>
-            <input
-              type="text"
-              id="fullname"
-              name="fullname"
-              value={fullname}
-              onChange={(e) => setFullname(e.target.value)} // Corrected typo
-              required
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="military_unit"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Military Unit
-            </label>
-            <input
-              type="number"
-              id="military_unit"
-              name="military_unit"
-              value={military_unit}
-              onChange={(e) => setMilitary_unit(e.target.value)}
-              required
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-          <div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
-            >
-              Sign Up
-            </button>
-          </div>
-        </form>
-        {error && <p className="text-sm text-center text-red-500">{error}</p>}
-        {success && (
-          <p className="text-sm text-center text-green-500">{success}</p>
+        {step === "signup" ? (
+          <>
+            <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
+              Roʻyxatdan oʻtish
+            </h2>
+            <form className="space-y-6" onSubmit={handleSignup}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Ism
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Familya
+                </label>
+                <input
+                  type="text"
+                  value={fullname}
+                  onChange={(e) => setFullname(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Harbiy qism raqami
+                </label>
+                <input
+                  type="number"
+                  value={militaryUnit}
+                  onChange={(e) => setMilitaryUnit(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  autoComplete="true"
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Parol
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
+                disabled={loading}
+              >
+                {loading ? "Kutilmoqda..." : "Roʻyxatdan oʻtish"}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
+              Hisobni Faollashtirish
+            </h2>
+            <form className="space-y-6" onSubmit={handleActivation}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Faollashtirish kodi
+                </label>
+                <input
+                  type="text"
+                  value={activationCode}
+                  onChange={(e) => setActivationCode(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
+                disabled={loading}
+              >
+                {loading ? "Kutilmoqda..." : "Faollashtirish"}
+              </button>
+            </form>
+          </>
         )}
-        <p className="text-sm text-center text-gray-600 dark:text-gray-300">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:text-blue-500">
-            Log in
-          </a>
-        </p>
+        {error && <p className="text-sm text-center text-red-500">{error}</p>}
+        {success && <p className="text-sm text-center text-green-500">{success}</p>}
       </div>
     </div>
   );

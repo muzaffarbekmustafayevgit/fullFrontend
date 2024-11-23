@@ -7,6 +7,7 @@ function Languages() {
 
     };
   localStorage.setItem('language',language)
+  
     return (
       <div className='bg-transparent'>
         <select

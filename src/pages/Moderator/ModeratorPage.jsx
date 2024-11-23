@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import Loading from "../../components/Loading";
-import Languages from "../../components/Languages";
 import { FaTelegramPlane, FaYoutube, FaInstagram, FaFacebook, FaHome, FaChevronRight } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
@@ -72,7 +71,7 @@ function ModeratorPage() {
                 className="w-11/12 flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 <FaHome className="dark:text-white" />
-                Home
+                Kurslarni ko'rish  <FaChevronRight className="dark:text-white right-0" />
               </a>
             </li>
             <li className="w-11/12">
@@ -81,8 +80,8 @@ function ModeratorPage() {
                 className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 <MdOutlineOndemandVideo className="dark:text-white" />
-                Kurslar
-                <FaChevronRight className="dark:text-white right-0" />
+                Kurs yaratish
+               
               </Link>
             </li>
             <li className="w-11/12">
@@ -91,7 +90,7 @@ function ModeratorPage() {
                 className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 <CgProfile />
-                Profile
+                Profil
               </Link>
             </li>
           </ul>
@@ -103,8 +102,10 @@ function ModeratorPage() {
           </div>
         </aside>
 
-        <section className="flex-1 bg-white dark:bg-gray-950 p-4">
-          
+        <section className="flex-1 bg-white dark:bg-gray-950 p-4 text-white">
+        
+
+        
         </section>
       </main>
     </div>

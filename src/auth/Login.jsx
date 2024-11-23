@@ -8,6 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Toggle theme between light and dark
@@ -35,13 +36,11 @@ const Login = () => {
     return true;
   };
 
-  // Handle the login process
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    // Validate the form before proceeding
     if (!validateForm()) return;
 
+    setLoading(true);
     try {
       const response = await fetch("http://api.eagledev.uz/api/user/login/", {
         method: "POST",
@@ -53,16 +52,38 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        
+
         if (data.access && data.refresh) {
-          // Store tokens and user data
+          // Store tokens
           localStorage.setItem("access_token", data.access);
           localStorage.setItem("refresh_token", data.refresh);
 
-          setError(null);
+          // Fetch user profile
+          const profileResponse = await fetch(
+            "http://api.eagledev.uz/api/user/profile/",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${data.access}`,
+              },
+            }
+          );
 
-          // Navigate to the profile page
-          navigate("/role");
+          if (profileResponse.ok) {
+            const profileData = await profileResponse.json();
+            const role = profileData?.user_obj?.role;
+
+            // Navigate based on role with fallback to "/home"
+            const roleRoutes = {
+              moderator: "/moderator",
+              student: "/courses",
+              admin: "/admin",
+            };
+
+            navigate(roleRoutes[role] || "/home");
+          } else {
+            throw new Error("Failed to fetch profile data.");
+          }
         } else {
           setError("Login failed. Incorrect credentials.");
         }
@@ -73,6 +94,8 @@ const Login = () => {
     } catch (error) {
       console.error("Login failed:", error);
       setError("Login failed. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,7 +107,7 @@ const Login = () => {
       <Mouse />
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg dark:bg-gray-800">
         <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
-          Log In
+          Sign In
         </h2>
         {error && <p className="text-sm text-center text-red-500">{error}</p>}
 
@@ -94,11 +117,12 @@ const Login = () => {
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              Email Address
+              
             </label>
             <input
               type="email"
               id="email"
+              placeholder="Email"
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -112,13 +136,14 @@ const Login = () => {
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              Password
+            
             </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
+                placeholder="Parol"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -134,37 +159,13 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="remember-me"
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 text-sm text-gray-700 dark:text-gray-300"
-              >
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <Link
-                to="/forgotpassword"
-                className="text-blue-600 hover:text-blue-500"
-              >
-                Forgot your password?
-              </Link>
-            </div>
-          </div>
-
           <div>
             <button
               type="submit"
               className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
+              disabled={loading}
             >
-              Sign in
+              {loading ? "Loading..." : "Sign in"}
             </button>
           </div>
         </form>
