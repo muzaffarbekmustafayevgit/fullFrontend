@@ -11,7 +11,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Toggle theme between light and dark
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -19,14 +18,13 @@ const Login = () => {
     localStorage.setItem("theme", newTheme);
   };
 
-  // Load the theme from local storage on page load
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
   }, []);
 
-  // Form validation for email
+  
   const validateForm = () => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!email.match(emailPattern)) {
@@ -54,11 +52,11 @@ const Login = () => {
         const data = await response.json();
 
         if (data.access && data.refresh) {
-          // Store tokens
+       
           localStorage.setItem("access_token", data.access);
           localStorage.setItem("refresh_token", data.refresh);
 
-          // Fetch user profile
+      
           const profileResponse = await fetch(
             "http://api.eagledev.uz/api/user/profile/",
             {
@@ -72,8 +70,8 @@ const Login = () => {
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
             const role = profileData?.user_obj?.role;
-
-            // Navigate based on role with fallback to "/home"
+            localStorage.setItem("userName", profileData.user_obj.username);
+            
             const roleRoutes = {
               moderator: "/moderator",
               student: "/courses",
@@ -99,12 +97,12 @@ const Login = () => {
     }
   };
 
-  // Toggle password visibility
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <Mouse />
+
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg dark:bg-gray-800">
         <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
           Sign In
@@ -116,9 +114,7 @@ const Login = () => {
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              
-            </label>
+            ></label>
             <input
               type="email"
               id="email"
@@ -135,9 +131,7 @@ const Login = () => {
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-            
-            </label>
+            ></label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}

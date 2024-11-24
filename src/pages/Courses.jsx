@@ -1,7 +1,20 @@
-import React, { useState, useEffect, useContext, createContext, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+  useCallback,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
-import { FaChevronRight, FaHome, FaTelegramPlane, FaYoutube, FaInstagram, FaFacebook } from "react-icons/fa";
+import {
+  FaChevronRight,
+  FaHome,
+  FaTelegramPlane,
+  FaYoutube,
+  FaInstagram,
+  FaFacebook,
+} from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { Link } from "react-router-dom";
@@ -11,18 +24,18 @@ const ThemeContext = createContext();
 
 const useTheme = () => {
   const context = useContext(ThemeContext);
-  if (!context) throw new Error('useTheme must be used within a ThemeProvider');
+  if (!context) throw new Error("useTheme must be used within a ThemeProvider");
   return context;
 };
 
 const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
+    const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
-    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    localStorage.setItem("theme", newTheme);
   };
 
   return (
@@ -33,16 +46,18 @@ const ThemeProvider = ({ children }) => {
 };
 
 const Courses = () => {
-  const [language, setLanguage] = useState(localStorage.getItem("language") || "uz");
+  const [language, setLanguage] = useState(
+    localStorage.getItem("language") || "uz"
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
-
-  const handleCourseClick = (courseId,courseName) => {
+  const userName = localStorage.getItem("userName");
+  const handleCourseClick = (courseId, courseName) => {
     localStorage.setItem("courseId", courseId); // Save the selected course ID to localStorage
-    localStorage.setItem('course',courseName)
+    localStorage.setItem("course", courseName);
     navigate("/courses/aboutCourse");
   };
 
@@ -93,11 +108,14 @@ const Courses = () => {
   return (
     <div className="h-screen flex flex-col">
       <header className="flex items-center justify-around bg-white dark:bg-gray-800 px-4 py-3 border-b dark:border-gray-500">
-        <a className="text-xl font-semibold w-7/12 text-black dark:text-white" href="#">
+        <a
+          className="text-xl font-semibold w-7/12 text-black dark:text-white"
+          href="#"
+        >
           Academy
         </a>
         <div className="flex items-center space-x-5">
-          <Link className="text-black dark:text-white" to={"/"}>Landing</Link>
+          <p className="text-black dark:text-white">{userName}</p>
           <select
             id="language"
             value={language}
@@ -149,21 +167,31 @@ const Courses = () => {
             </ul>
           </nav>
           <div className="flex justify-around align-bottom mt-auto pt-4 border-t dark:border-gray-700">
-            <a href="#"><FaTelegramPlane className="h-6 w-6 text-blue-500" /></a>
-            <a href="#"><FaInstagram className="h-6 w-6 text-pink-600" /></a>
-            <a href="#"><FaFacebook className="h-6 w-6 text-blue-800" /></a>
-            <a href="#"><FaYoutube className="h-6 w-6 text-red-700" /></a>
+            <a href="#">
+              <FaTelegramPlane className="h-6 w-6 text-blue-500" />
+            </a>
+            <a href="#">
+              <FaInstagram className="h-6 w-6 text-pink-600" />
+            </a>
+            <a href="#">
+              <FaFacebook className="h-6 w-6 text-blue-800" />
+            </a>
+            <a href="#">
+              <FaYoutube className="h-6 w-6 text-red-700" />
+            </a>
           </div>
         </aside>
 
         <section className="flex-1 bg-white dark:bg-gray-900 p-4">
           <div className="p-4">
-            <h3 className="text-lg dark:text-white font-semibold mb-4">Kurslar:</h3>
-            <div className="max-h-[550px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <h3 className="text-lg dark:text-white font-semibold mb-4">
+              Kurslar:
+            </h3>
+            <div className="max-h-[550px] overflow-scroll grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {courses.map((course) => (
                 <div
                   key={course.id}
-                  onClick={() => handleCourseClick(course.id,course.title)}
+                  onClick={() => handleCourseClick(course.id, course.title)}
                   className="border rounded px-2 py-3 dark:text-white dark:bg-gray-700 cursor-pointer hover:bg-gray-200"
                 >
                   <img

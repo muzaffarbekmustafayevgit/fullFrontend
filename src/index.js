@@ -18,6 +18,10 @@ import UserActivation from "./auth/UserActivation";
 import Lessons from "./pages/Lessons";
 import ModeratorPage from "./pages/Moderator/ModeratorPage";
 import AdminPanel from "./pages/admin/AdminPanel";
+import CourseCreating from "./pages/Moderator/CourseCreating";
+import ModuleCreating from "./pages/Moderator/ModuleCreating";
+import Loading from "./components/Loading";
+import LessonCreating from "./pages/Moderator/LessonCreating";
 // import Loading from "./components/Loading";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -37,6 +41,9 @@ root.render(
       <Route path="/courses" element={<Courses />} />
       <Route path="/languages" element={<Languages />} />
       <Route path="/courses/aboutCourse" element={<AboutCourse />} />
+      <Route path="/course/course-creating" element={<CourseCreating/>}/>
+      <Route path="/course/course-creating/module-creating" element={<ModuleCreating/>} loader={<Loading/>}/>
+      <Route path="/course/course-creating/module-creating/lesson-creating" element={<LessonCreating/>}/>
       <Route path="/activation" element={<UserActivation/>}/>
       <Route path="/lessons" element={<Lessons/>}/>
       <Route path="/moderator" element={<ModeratorPage/>}/>

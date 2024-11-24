@@ -45,8 +45,8 @@ function AboutCourse() {
       if (!response.ok) throw new Error("Ma'lumotlarni olishda xatolik yuz berdi");
 
       const result = await response.json();
-      // localStorage.setItem("selectedCourse", category);
-      localStorage.setItem("selectedCoursesIndex", index + 1);
+      // // localStorage.setItem("selectedCourse", category);
+      localStorage.setItem("selectedCoursesIndex", 2);
       localStorage.removeItem("selectedCategory");
 
       setCourseData(result);
@@ -90,6 +90,7 @@ function AboutCourse() {
     navigate("/lessons");
   };
 
+  const userName = localStorage.getItem("userName");
   if (loading) return <Loading />;
   if (error) return <p className="text-red-500">Xatolik: {error}</p>;
 
@@ -100,9 +101,9 @@ function AboutCourse() {
           Academy
         </a>
         <div className="flex items-center space-x-5">
-          <Link className="text-black dark:text-white" to={"/"}>
-            Landing
-          </Link>
+          <p className="text-black dark:text-white" >
+            {userName}
+          </p>
           <p className="text-black dark:text-white" id="profile">
             <select
               id="language"

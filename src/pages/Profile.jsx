@@ -97,9 +97,9 @@ const Profile = () => {
           Academy
         </a>
         <div className="flex items-center space-x-5">
-          <Link className="text-black dark:text-white" to={"/"}>
+          {/* <Link className="text-black dark:text-white" to={"/"}>
             Landing
-          </Link>
+          </Link> */}
           <p className="text-black dark:text-white" id="profile">
             <Languages />
           </p>

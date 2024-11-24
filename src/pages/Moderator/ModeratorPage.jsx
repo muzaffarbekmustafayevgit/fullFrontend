@@ -8,7 +8,6 @@ import { CgProfile } from "react-icons/cg";
 function ModeratorPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { category, index } = location.state || {};
   const [theme, setTheme] = useState("dark");
   const [courseData, setCourseData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +16,6 @@ function ModeratorPage() {
     localStorage.getItem("language") || "uz"
   );
 
-  const handleNavigate = () => navigate("/lessons");
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -35,6 +33,7 @@ function ModeratorPage() {
   }, []);
 
   
+  const userName = localStorage.getItem("userName");
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -52,9 +51,9 @@ function ModeratorPage() {
           Academy
         </a>
         <div className="flex items-center space-x-5">
-          <Link className="text-black dark:text-white" to={"/"}>
-            Landing
-          </Link>
+          <p className="text-black dark:text-white" >
+            {userName}
+          </p>
           
           <button onClick={toggleTheme} className="text-xl">
             {theme === "light" ? "🌙" : "☀️"}
@@ -76,7 +75,7 @@ function ModeratorPage() {
             </li>
             <li className="w-11/12">
               <Link
-                to={"/courses"}
+                to={"/course/course-creating"}
                 className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 <MdOutlineOndemandVideo className="dark:text-white" />

@@ -2,14 +2,21 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 
-// Modul elementi
-const ModuleItem = ({ module, openModuleId, onSelectModule, onSelectLesson }) => (
+import { FaChevronRight } from "react-icons/fa";
+const ModuleItem = ({
+  module,
+  openModuleId,
+  onSelectModule,
+  onSelectLesson,
+}) => (
   <div className="p-2 mt-4 bg-white dark:bg-gray-700 rounded shadow">
     <div
       className="flex justify-between items-center cursor-pointer"
       onClick={() => onSelectModule(module.id)}
     >
-      <h3 className="text-lg font-medium text-black dark:text-white">{module.title}</h3>
+      <h3 className="text-lg font-medium text-black dark:text-white">
+        {module.title}
+      </h3>
       <span className="text-black dark:text-white">
         {openModuleId === module.id ? "▲" : "▼"}
       </span>
@@ -32,11 +39,13 @@ const ModuleItem = ({ module, openModuleId, onSelectModule, onSelectLesson }) =>
 
 // Dars tafsilotlari komponenti
 const LessonItem = ({ lessonData }) => (
-  <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded shadow">
+  <div className=" bg-white dark:bg-gray-800 rounded shadow">
     {lessonData ? (
       <>
-        <h3 className="text-lg font-semibold text-black dark:text-white">{lessonData.title}</h3>
-        <video src={lessonData.video} controls></video>
+        <h3 className="text-lg font-semibold text-black dark:text-white">
+          {lessonData.title}
+        </h3>
+        <video className="w-4/5" src={lessonData.video} controls></video>
       </>
     ) : (
       <p className="text-black dark:text-white">No lesson selected</p>
@@ -45,6 +54,7 @@ const LessonItem = ({ lessonData }) => (
 );
 
 const Lessons = () => {
+  const courseName = localStorage.getItem("course");
   const [state, setState] = useState({
     theme: localStorage.getItem("theme") || "dark",
     modulesData: [],
@@ -56,15 +66,30 @@ const Lessons = () => {
   });
 
   const navigate = useNavigate();
-  const selectedCourse = parseInt(localStorage.getItem("selectedCoursesIndex"), 10); // Ensure it's a number
-
+  const selectedCourse = parseInt(
+    localStorage.getItem("selectedCoursesIndex"),
+    10
+  ); // Ensure it's a number
+console.log(localStorage.getItem("selectedCoursesIndex"));
   // Default to 1 if selectedCourse is invalid
   const validCourse = isNaN(selectedCourse) ? 1 : selectedCourse;
 
   const messages = {
-    uz: { selectLesson: "Darslikni tanlang", noModules: "Modullar mavjud emas", lessons: "Darsliklar" },
-    en: { selectLesson: "Select a lesson", noModules: "No modules available", lessons: "Lessons" },
-    ru: { selectLesson: "Выберите урок", noModules: "Модули недоступны", lessons: "Уроки" },
+    uz: {
+      selectLesson: "Darslikni tanlang",
+      noModules: "Modullar mavjud emas",
+      lessons: "Darsliklar",
+    },
+    en: {
+      selectLesson: "Select a lesson",
+      noModules: "No modules available",
+      lessons: "Lessons",
+    },
+    ru: {
+      selectLesson: "Выберите урок",
+      noModules: "Модули недоступны",
+      lessons: "Уроки",
+    },
   };
 
   // Mavzuni o'zgartirish
@@ -122,7 +147,11 @@ const Lessons = () => {
         return { ...prevState, modulesData: modulesResult, loading: false };
       });
     } catch (err) {
-      setState((prevState) => ({ ...prevState, error: err.message, loading: false }));
+      setState((prevState) => ({
+        ...prevState,
+        error: err.message,
+        loading: false,
+      }));
     }
   }, [state.language, validCourse]);
 
@@ -135,12 +164,15 @@ const Lessons = () => {
     }
 
     try {
-      const response = await fetch(`http://api.eagledev.uz/api/Lessons/${lessonId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Accept-Language": state.language,
-        },
-      });
+      const response = await fetch(
+        `http://api.eagledev.uz/api/Lessons/${lessonId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Accept-Language": state.language,
+          },
+        }
+      );
 
       if (!response.ok) throw new Error("Error fetching lesson details");
 
@@ -178,14 +210,15 @@ const Lessons = () => {
   if (state.loading) return <Loading />;
   if (state.error) return <p>Error: {state.error}</p>;
 
+  const userName = localStorage.getItem("userName");
   return (
     <div className="h-screen flex flex-col">
       <header className="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3">
-        <span className="text-xl font-semibold text-black dark:text-white">Academy</span>
+        <span className="text-xl font-semibold text-black dark:text-white">
+          Academy
+        </span>
         <div className="flex items-center space-x-4">
-          <Link to="/" className="text-black dark:text-white">
-            Landing
-          </Link>
+          <p className="text-black dark:text-white">{userName}</p>
           <select
             value={state.language}
             onChange={handleLanguageChange}
@@ -213,14 +246,23 @@ const Lessons = () => {
               />
             ))
           ) : (
-            <p className="text-black dark:text-white">{messages[state.language].noModules}</p>
+            <p className="text-black dark:text-white">
+              {messages[state.language].noModules}
+            </p>
           )}
         </aside>
         <section className="flex-1 p-4 bg-gray-100 dark:bg-gray-900">
+          <p className=" dark:text-white font-semibold">
+            Kurslar{" "}
+            <FaChevronRight className="dark:text-white right-0 inline-block " />{" "}
+            {courseName}
+          </p>
           {state.selectedLessonData ? (
             <LessonItem lessonData={state.selectedLessonData} />
           ) : (
-            <p className="text-black dark:text-white">{messages[state.language].selectLesson}</p>
+            <p className="text-black dark:text-white">
+              {messages[state.language].selectLesson}
+            </p>
           )}
         </section>
       </main>
