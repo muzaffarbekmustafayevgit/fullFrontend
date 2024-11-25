@@ -9,7 +9,6 @@ import { CgProfile } from "react-icons/cg";
 function AboutCourse() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { category, index } = location.state || {};
 
   const [theme, setTheme] = useState("dark");
   const [courseData, setCourseData] = useState({});
@@ -18,7 +17,6 @@ function AboutCourse() {
   const [selectedModule, setSelectedModule] = useState(null);
   const [language, setLanguage] = useState(localStorage.getItem("language") || "uz");
 
-  // Fetch data function
   const fetchData = async () => {
     const courseId = localStorage.getItem("courseId");
     const token = localStorage.getItem("access_token");
@@ -57,7 +55,6 @@ function AboutCourse() {
     }
   };
  const courseName=localStorage.getItem("course")
-  // Fetch data on mount and when language changes
   useEffect(() => {
     fetchData();
   }, [language]);

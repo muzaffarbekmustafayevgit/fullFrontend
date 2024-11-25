@@ -37,7 +37,6 @@ const ModuleItem = ({
   </div>
 );
 
-// Dars tafsilotlari komponenti
 const LessonItem = ({ lessonData }) => (
   <div className=" bg-white dark:bg-gray-800 rounded shadow">
     {lessonData ? (
@@ -67,10 +66,9 @@ const Lessons = () => {
 
   const navigate = useNavigate();
   const selectedCourse = parseInt(
-    localStorage.getItem("selectedCoursesIndex"),
+    localStorage.getItem("courseId"),
     10
   ); // Ensure it's a number
-console.log(localStorage.getItem("selectedCoursesIndex"));
   // Default to 1 if selectedCourse is invalid
   const validCourse = isNaN(selectedCourse) ? 1 : selectedCourse;
 

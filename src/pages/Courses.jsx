@@ -1,11 +1,5 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  createContext,
-  useCallback,
-} from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useMemo, useContext, createContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import {
   FaChevronRight,
@@ -17,16 +11,10 @@ import {
 } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
-import { Link } from "react-router-dom";
 
-// Theme Context for better state management
+// Theme Context
 const ThemeContext = createContext();
-
-const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) throw new Error("useTheme must be used within a ThemeProvider");
-  return context;
-};
+const useTheme = () => useContext(ThemeContext);
 
 const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
@@ -46,55 +34,40 @@ const ThemeProvider = ({ children }) => {
 };
 
 const Courses = () => {
-  const [language, setLanguage] = useState(
-    localStorage.getItem("language") || "uz"
-  );
+  const [language, setLanguage] = useState(localStorage.getItem("language") || "uz");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [courses, setCourses] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Har bir sahifada nechta element ko‘rsatiladi
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const userName = localStorage.getItem("userName");
-  const handleCourseClick = (courseId, courseName) => {
-    localStorage.setItem("courseId", courseId); // Save the selected course ID to localStorage
-    localStorage.setItem("course", courseName);
-    navigate("/courses/aboutCourse");
-  };
 
-  const handleLanguageChange = (event) => {
-    const selectedLanguage = event.target.value;
-    setLanguage(selectedLanguage);
-    localStorage.setItem("language", selectedLanguage);
-  };
-
-  // Use useCallback to prevent unnecessary re-renders of fetchData
   const fetchCourses = useCallback(async () => {
     const token = localStorage.getItem("access_token");
-
     if (!token) {
       navigate("/login");
-    } else {
-      try {
-        const response = await fetch("http://api.eagledev.uz/api/Courses/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-            "Accept-Language": language,
-          },
-        });
+      return;
+    }
 
-        if (!response.ok) {
-          setError(`Failed to fetch courses: ${response.statusText}`);
-          return;
-        }
+    try {
+      const response = await fetch("http://api.eagledev.uz/api/Courses/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Accept-Language": language,
+        },
+      });
 
-        const result = await response.json();
-        setCourses(result); // Set the whole course object, not just titles
-      } catch (err) {
-        setError("Error fetching courses. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
+      if (!response.ok) throw new Error(response.statusText);
+
+      const result = await response.json();
+      setCourses(result);
+    } catch {
+      setError("Error fetching courses. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   }, [language, navigate]);
 
@@ -102,16 +75,20 @@ const Courses = () => {
     fetchCourses();
   }, [fetchCourses]);
 
+  const paginatedCourses = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return courses.slice(startIndex, startIndex + itemsPerPage);
+  }, [courses, currentPage]);
+
+  const totalPages = Math.ceil(courses.length / itemsPerPage);
+
   if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
 
   return (
     <div className="h-screen flex flex-col">
       <header className="flex items-center justify-around bg-white dark:bg-gray-800 px-4 py-3 border-b dark:border-gray-500">
-        <a
-          className="text-xl font-semibold w-7/12 text-black dark:text-white"
-          href="#"
-        >
+        <a className="text-xl font-semibold w-7/12 text-black dark:text-white" href="#">
           Academy
         </a>
         <div className="flex items-center space-x-5">
@@ -119,7 +96,11 @@ const Courses = () => {
           <select
             id="language"
             value={language}
-            onChange={handleLanguageChange}
+            onChange={(e) => {
+              const lang = e.target.value;
+              setLanguage(lang);
+              localStorage.setItem("language", lang);
+            }}
             className="language-select dark:text-white dark:bg-gray-800"
           >
             <option value="uz">O'zbekcha</option>
@@ -132,10 +113,10 @@ const Courses = () => {
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col sm:flex-row">
+      <main className="flex flex-1">
         <aside className="w-full sm:w-1/5 bg-gray-100 dark:bg-gray-800 p-4 flex flex-col justify-between space-y-4">
           <nav>
-            <ul className="space-y-4 w-full flex flex-col items-start justify-center">
+            <ul className="space-y-4 w-full flex flex-col items-start">
               <li className="flex items-center w-full">
                 <a
                   href="#"
@@ -166,7 +147,7 @@ const Courses = () => {
               </li>
             </ul>
           </nav>
-          <div className="flex justify-around align-bottom mt-auto pt-4 border-t dark:border-gray-700">
+          <div className="flex justify-around mt-auto pt-4 border-t dark:border-gray-700">
             <a href="#">
               <FaTelegramPlane className="h-6 w-6 text-blue-500" />
             </a>
@@ -183,29 +164,58 @@ const Courses = () => {
         </aside>
 
         <section className="flex-1 bg-white dark:bg-gray-900 p-4">
-          <div className="p-4">
-            <h3 className="text-lg dark:text-white font-semibold mb-4">
-              Kurslar:
-            </h3>
-            <div className="max-h-[550px] overflow-scroll grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {courses.map((course) => (
-                <div
-                  key={course.id}
-                  onClick={() => handleCourseClick(course.id, course.title)}
-                  className="border rounded px-2 py-3 dark:text-white dark:bg-gray-700 cursor-pointer hover:bg-gray-200"
-                >
-                  <img
-                    src={course.thumbnail}
-                    alt={course.title}
-                    className="w-full h-40 object-cover rounded"
-                  />
-                  <h4 className="mt-2">{course.title}</h4>
-                  <p className="text-sm text-gray-500">
-                    Price: {course.price} {course.is_free ? "(Free)" : ""}
-                  </p>
-                </div>
-              ))}
-            </div>
+          <h3 className="text-lg dark:text-white font-semibold mb-4">Kurslar:</h3>
+          <div className="max-h-[550px] overflow-auto scrollbar-hide grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {paginatedCourses.map((course) => (
+              <div
+                key={course.id}
+                onClick={() => {
+                  localStorage.setItem("courseId", course.id);
+                  localStorage.setItem("course", course.title);
+                  navigate("/courses/aboutCourse");
+                }}
+                className="border rounded px-2 py-3 dark:text-white dark:bg-gray-700 cursor-pointer hover:bg-gray-200"
+              >
+                <img
+                  src={course.thumbnail}
+                  alt={course.title}
+                  className="w-full h-40 object-cover rounded"
+                />
+                <h4 className="mt-2">{course.title}</h4>
+                <p className="text-sm text-gray-500">
+                  Price: {course.price} {course.is_free ? "(Free)" : ""}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 mx-1 bg-gray-300 dark:bg-gray-700 rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-4 py-2 mx-1 rounded ${
+                  currentPage === index + 1
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-300 dark:bg-gray-700"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 mx-1 bg-gray-300 dark:bg-gray-700 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         </section>
       </main>
@@ -213,7 +223,6 @@ const Courses = () => {
   );
 };
 
-// Wrap your App in ThemeProvider to manage theme state globally
 const App = () => (
   <ThemeProvider>
     <Courses />
