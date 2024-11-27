@@ -28,8 +28,8 @@ const ModuleItem = ({
             key={lesson.id}
             onClick={() => onSelectLesson(lesson.id)}
             className="text-sm text-black dark:text-white cursor-pointer"
-          >
-            {lesson.title}
+          ><input type="checkbox" name="" id="" />
+            {lesson.title} 
           </p>
         ))}
       </div>

@@ -22,6 +22,7 @@ import CourseCreating from "./pages/Moderator/CourseCreating";
 import ModuleCreating from "./pages/Moderator/ModuleCreating";
 import Loading from "./components/Loading";
 import LessonCreating from "./pages/Moderator/LessonCreating";
+import ProgressBar from "./components/ProgressBar";
 // import Loading from "./components/Loading";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -47,6 +48,7 @@ root.render(
       <Route path="/activation" element={<UserActivation/>}/>
       <Route path="/lessons" element={<Lessons/>}/>
       <Route path="/moderator" element={<ModeratorPage/>}/>
+      <Route path="/progress" element = {<ProgressBar/>}/>
     </Routes>
   </BrowserRouter>
 );
