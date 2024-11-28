@@ -40,7 +40,7 @@ root.render(
       <Route path="/courses/login" element={<Login />} />
       <Route path="/profile/" element={<Profile />} />
       <Route path="/courses" element={<Courses />} />
-      <Route path="/languages" element={<Languages />} />
+      {/* <Route path="/languages" element={<Languages />} /> */}
       <Route path="/courses/aboutCourse" element={<AboutCourse />} />
       <Route path="/course/course-creating" element={<CourseCreating/>}/>
       <Route path="/course/course-creating/module-creating" element={<ModuleCreating/>} loader={<Loading/>}/>

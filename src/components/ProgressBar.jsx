@@ -1,6 +1,6 @@
 import React from "react";
 
-const ProgressBar = ({ courseName=2, progress=60 }) => {
+const ProgressBar = ({ courseName="js", progress=23 }) => {
   return (
     <div className= "w-1/3  bg-gray-800 p-4 rounded-lg text-white ">
       {/* Kurs nomi */}

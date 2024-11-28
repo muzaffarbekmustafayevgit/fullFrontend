@@ -39,7 +39,7 @@ const Courses = () => {
   const [error, setError] = useState(null);
   const [courses, setCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6; // Har bir sahifada nechta element ko‘rsatiladi
+  const itemsPerPage = 6;
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const userName = localStorage.getItem("userName");
@@ -87,12 +87,13 @@ const Courses = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <header className="flex items-center justify-around bg-white dark:bg-gray-800 px-4 py-3 border-b dark:border-gray-500">
-        <a className="text-xl font-semibold w-7/12 text-black dark:text-white" href="#">
+      {/* Header */}
+      <header className="flex flex-wrap items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 border-b dark:border-gray-500">
+        <a className="text-xl font-semibold w-full sm:w-auto text-black dark:text-white" href="#">
           Academy
         </a>
-        <div className="flex items-center space-x-5">
-          <p className="text-black dark:text-white">{userName}</p>
+        <div className="flex flex-wrap items-center space-y-2 sm:space-y-0 sm:space-x-5 w-full sm:w-auto mt-2 sm:mt-0">
+          <p className="text-black dark:text-white text-center w-full sm:w-auto">{userName}</p>
           <select
             id="language"
             value={language}
@@ -101,42 +102,43 @@ const Courses = () => {
               setLanguage(lang);
               localStorage.setItem("language", lang);
             }}
-            className="language-select dark:text-white dark:bg-gray-800"
+            className="language-select dark:text-white dark:bg-gray-800 w-full sm:w-auto"
           >
             <option value="uz">O'zbekcha</option>
             <option value="ru">Русский</option>
             <option value="en">English</option>
           </select>
-          <button onClick={toggleTheme} className="text-xl">
+          <button onClick={toggleTheme} className="text-xl mx-auto sm:mx-0">
             {theme === "light" ? "🌙" : "☀️"}
           </button>
         </div>
       </header>
 
-      <main className="flex flex-1">
-        <aside className="w-full sm:w-1/5 bg-gray-100 dark:bg-gray-800 p-4 flex flex-col justify-between space-y-4">
+      {/* Main Content */}
+      <main className="flex flex-1 flex-wrap">
+        {/* Sidebar */}
+        <aside className="w-full sm:w-1/4 md:w-1/5 bg-gray-100 dark:bg-gray-800 p-4 flex flex-col justify-between space-y-4">
           <nav>
-            <ul className="space-y-4 w-full flex flex-col items-start">
-              <li className="flex items-center w-full">
+            <ul className="space-y-4">
+              <li>
                 <a
                   href="#"
-                  className="w-11/12 flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                  className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
-                  <FaHome className="dark:text-white" />
+                  <FaHome />
                   Home
                 </a>
               </li>
-              <li className="w-11/12">
+              <li>
                 <Link
                   to={"/courses"}
                   className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
-                  <MdOutlineOndemandVideo className="dark:text-white" />
+                  <MdOutlineOndemandVideo />
                   Kurslar
-                  <FaChevronRight className="dark:text-white right-0" />
                 </Link>
               </li>
-              <li className="w-11/12">
+              <li>
                 <Link
                   to={"/profile"}
                   className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -163,9 +165,10 @@ const Courses = () => {
           </div>
         </aside>
 
+        {/* Courses Section */}
         <section className="flex-1 bg-white dark:bg-gray-900 p-4">
           <h3 className="text-lg dark:text-white font-semibold mb-4">Kurslar:</h3>
-          <div className="max-h-[550px] overflow-auto scrollbar-hide grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {paginatedCourses.map((course) => (
               <div
                 key={course.id}
