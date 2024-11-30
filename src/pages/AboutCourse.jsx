@@ -8,8 +8,6 @@ import { CgProfile } from "react-icons/cg";
 
 function AboutCourse() {
   const navigate = useNavigate();
-  const location = useLocation();
-
   const [theme, setTheme] = useState("dark");
   const [courseData, setCourseData] = useState({});
   const [loading, setLoading] = useState(true);

@@ -163,10 +163,10 @@ function CourseCreating() {
               </a>
             </li>
             <li className="w-11/12">
-              <a href="#" className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
+              <Link to={"/profile"} className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
                 <CgProfile className="dark:text-white" />
                 Profil
-              </a>
+              </Link>
             </li>
           </ul>
         </aside>

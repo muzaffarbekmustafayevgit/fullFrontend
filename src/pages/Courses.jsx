@@ -75,10 +75,10 @@ const Courses = () => {
     fetchCourses();
   }, [fetchCourses]);
 
-  const paginatedCourses = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return courses.slice(startIndex, startIndex + itemsPerPage);
-  }, [courses, currentPage]);
+    const paginatedCourses = useMemo(() => {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      return courses.slice(startIndex, startIndex + itemsPerPage);
+    }, [courses, currentPage]);
 
   const totalPages = Math.ceil(courses.length / itemsPerPage);
 
@@ -121,13 +121,12 @@ const Courses = () => {
           <nav>
             <ul className="space-y-4">
               <li>
-                <a
-                  href="#"
+                <Link to={'/home'}
                   className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
                   <FaHome />
                   Home
-                </a>
+                </Link>
               </li>
               <li>
                 <Link
@@ -136,6 +135,7 @@ const Courses = () => {
                 >
                   <MdOutlineOndemandVideo />
                   Kurslar
+                  <FaChevronRight/>
                 </Link>
               </li>
               <li>
@@ -182,7 +182,8 @@ const Courses = () => {
                 <img
                   src={course.thumbnail}
                   alt={course.title}
-                  className="w-full h-40 object-cover rounded"
+
+                  className="w-full h-40  rounded object-contain"
                 />
                 <h4 className="mt-2">{course.title}</h4>
                 <p className="text-sm text-gray-500">

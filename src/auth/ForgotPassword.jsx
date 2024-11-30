@@ -1,4 +1,4 @@
-// src/pages/ForgotPassword.jsx
+
 import React, { useState } from 'react';
 
 const ForgotPassword = () => {
@@ -6,7 +6,6 @@ const ForgotPassword = () => {
 
   const handleForgotPassword = (e) => {
     e.preventDefault();
-    // Add password reset logic here
     console.log('Password reset email sent to:', email);
   };
 

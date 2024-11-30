@@ -13,7 +13,6 @@ import { CiTextAlignCenter } from "react-icons/ci";
 import Loading from "../components/Loading";
 import { Link, useNavigate } from "react-router-dom";
 import Languages from "../components/Languages";
-// import DefaultUserImage from "../images/DefaultUserImage.png";
 const Profile = () => {
   const [theme, setTheme] = useState("dark");
   const [data, setData] = useState(null);
@@ -24,10 +23,8 @@ const Profile = () => {
       localStorage.removeItem("accessToken");
     };
 
-    // `unload` hodisasiga tinglovchi qo'shiladi
     window.addEventListener("unload", handleUnload);
 
-    // Tozalanish uchun tinglovchi olib tashlanadi
     return () => {
       window.removeEventListener("unload", handleUnload);
     };
@@ -50,7 +47,6 @@ const Profile = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // LocalStorage'dan access tokenni olish
         const token = localStorage.getItem("access_token");
 
         if (!token) {
@@ -62,7 +58,7 @@ const Profile = () => {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`, // Tokenni Authorization headeriga qo'shish
+              Authorization: `Bearer ${token}`, 
             },
           } 
         );
@@ -71,9 +67,7 @@ const Profile = () => {
 
         const result = await response.json();
         setData(result);
-        // if (result.user_obj.role === "moderator") {
-        //   navigate("/moderator");
-        // }
+    
       } catch (err) {
         setError(err.message);
       } finally {
@@ -85,8 +79,7 @@ const Profile = () => {
   }, []);
 
   if (loading) return <Loading />;
-  // if (error) return <p>Error: {error}</p>;
-  // console.log(data);
+
   return (
     <div className="h-screen flex flex-col">
       <header className="flex items-center justify-around bg-white dark:bg-gray-800 px-4 py-3 border-b dark:border-gray-500">
@@ -97,9 +90,7 @@ const Profile = () => {
           Academy
         </a>
         <div className="flex items-center space-x-5">
-          {/* <Link className="text-black dark:text-white" to={"/"}>
-            Landing
-          </Link> */}
+      
           <p className="text-black dark:text-white" id="profile">
             <Languages />
           </p>
@@ -116,13 +107,12 @@ const Profile = () => {
         <aside className="w-full sm:w-1/5 bg-gray-100 dark:bg-gray-800 p-4 flex flex-col justify-between space-y-4">
           <ul className="space-y-4 w-full flex flex-col items-start justify-center">
             <li className="flex items-center w-full">
-              <a
-                href="#"
+              <Link to={"/home"}
                 className="w-11/12 flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 <FaHome className="dark:text-white" />
                 Home
-              </a>
+              </Link>
             </li>
             <li className="w-11/12">
               <Link
@@ -133,15 +123,7 @@ const Profile = () => {
                 Kurslar
               </Link>
             </li>
-            <li className="w-11/12">
-              <a
-                href="#"
-                className="flex items-center gap-2 p-2 rounded dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
-              >
-                <CiTextAlignCenter className="dark:text-white" />
-                Video's text
-              </a>
-            </li>
+            
             <li className="w-11/12">
               <Link
                 to={"/profile"}
